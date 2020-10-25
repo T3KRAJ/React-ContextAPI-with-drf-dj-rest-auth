@@ -111,9 +111,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000"
-]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -123,6 +120,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 }
+CORS_ALLOWED_ORGIN = (
+    'localhost:3000',
+)
+
+CSRF_COOKIE_NAME = "csrftoken"
+ACCOUNT_AUTHENTICATION_METHOD = 'username'
 
 
 STATIC_URL = '/static/'
