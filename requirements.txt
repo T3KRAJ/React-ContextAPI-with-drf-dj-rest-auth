@@ -4,13 +4,9 @@ cffi==1.14.3
 chardet==3.0.4
 cryptography==3.1.1
 defusedxml==0.6.0
-dj-rest-auth==1.1.2
 Django==3.1.2
-django-allauth==0.43.0
 django-cors-headers==3.5.0
-django-rest-framework==0.1.0
 djangorestframework==3.12.1
-djangorestframework-simplejwt==4.4.0
 idna==2.10
 oauthlib==3.1.0
 pycparser==2.20

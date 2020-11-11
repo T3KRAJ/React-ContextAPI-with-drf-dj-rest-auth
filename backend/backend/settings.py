@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')qu*$!9&n_l3x$yh49ee%y1-i7llm7v1u1ikq2j@-2#hs+o&*a'
 
@@ -19,22 +18,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'core',
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth',
-
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth.registration',
+    #internal apps
+    'core'
 
 ]
-
-SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -113,24 +102,17 @@ USE_TZ = True
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
-    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    ),
+    )        
 }
+
+
 CORS_ALLOWED_ORGIN = (
     'localhost:3000',
 )
-
-CSRF_COOKIE_NAME = "csrftoken"
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
 
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'build/static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
