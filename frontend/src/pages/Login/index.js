@@ -1,6 +1,6 @@
 import styles from './login.module.css';
 import React, {useState} from 'react';
-
+import { Link, Redirect } from 'react-router-dom';
 import { loginUser, useAuthState, useAuthDispatch } from '../../context'
  
  
@@ -10,23 +10,20 @@ function Login(props) {
     const [password, setPassword] = useState('')
  
     const dispatch = useAuthDispatch()
-    const { loading, errorMessage } = useAuthState() //read the values of loading and errorMessage from context
- 
- 
+    const { loading, errorMessage, isAuthenticated } = useAuthState() //read the values of loading and errorMessage from context
  
  
     const handleLogin = async (e) => {
-        e.preventDefault()
- 
-        try {
-            let response = await loginUser(dispatch, { email, password })
-            if (!response.user) return
-            props.history.push('/dashboard')
-        } catch (error) {
-            console.log(error)
-        }
-    }
- 
+        console.log('submitted')
+        e.preventDefault();
+        console.log(isAuthenticated)
+
+        loginUser(dispatch, {email, password});
+    };
+
+    if (isAuthenticated)
+        return <Redirect to='/' />;
+
     return (
         <div className={styles.container}>
             <div className={{ width: 200 }}>
@@ -34,15 +31,15 @@ function Login(props) {
                 {
                     errorMessage ? <p className={styles.error}>{errorMessage}</p> : null
                 }
-                <form >
+                <form onSubmit={handleLogin}>
                     <div className={styles.loginForm}>
                         <div className={styles.loginFormItem}>
                             <label htmlFor="email">Username</label>
-                            <input type="text" id='email' value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading} />
+                            <input type="text" id='email' value={email} onChange={(e) => setEmail(e.target.value)} disabled={loading}  autoComplete="on"/>
                         </div>
                         <div className={styles.loginFormItem}>
                             <label htmlFor="password">Password</label>
-                            <input type="password" id='password' value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} />
+                            <input type="password" id='password' value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} autoComplete="on"/>
                         </div>
                     </div>
                     <button onClick={handleLogin} disabled={loading}>login</button>

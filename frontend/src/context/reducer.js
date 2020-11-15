@@ -1,46 +1,83 @@
-let user = localStorage.getItem("currentUser")
-  ? JSON.parse(localStorage.getItem("currentUser")).user
-  : "";
-let token = localStorage.getItem("currentUser")
-  ? JSON.parse(localStorage.getItem("currentUser")).auth_token
-  : "";
- 
+import {
+  SIGNUP_SUCCESS,
+  SIGNUP_FAIL,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  LOGOUT,
+  AUTHENTICATED_FAIL,
+  AUTHENTICATED_SUCCESS,
+  USER_LOADED_SUCCESS,
+  USER_LOADED_FAIL
+} from './types';
+
 export const initialState = {
-  userDetails: "" || user,
-  token: "" || token,
+  access: localStorage.getItem('access'),
+  refresh: localStorage.getItem('refresh'),
+  isAuthenticated: false,
+  user: null,
   loading: false,
   errorMessage: null
 };
- 
-export const AuthReducer = (initialState, action) => {
-  switch (action.type) {
-    case "REQUEST_LOGIN":
-      return {
-        ...initialState,
-        loading: true
-      };
-    case "LOGIN_SUCCESS":
-      return {
-        ...initialState,
-        user: action.payload.user,
-        token: action.payload.auth_token,
-        loading: false
-      };
-    case "LOGOUT":
-      return {
-        ...initialState,
-        user: "",
-        token: ""
-      };
- 
-    case "LOGIN_ERROR":
-      return {
-        ...initialState,
-        loading: false,
-        errorMessage: action.error
-      };
- 
-    default:
-      throw new Error(`Unhandled action type: ${action.type}`);
+
+
+export const AuthReducer = (state = initialState, action) => {
+  const { type, payload } = action;
+
+  switch(type) {
+      case "REQUEST_LOGIN":
+        return {
+          ...initialState,
+          loading: true
+        };
+      case AUTHENTICATED_SUCCESS:
+        return {
+            ...state,
+            isAuthenticated: true
+        }
+      case LOGIN_SUCCESS:
+        localStorage.setItem('access', payload.access);
+        return {
+          ...state,
+          isAuthenticated: true,
+          access: payload.access,
+          refresh: payload.refresh
+        }
+      case USER_LOADED_SUCCESS:
+        return {
+          ...state,
+          user: payload
+        }
+      case SIGNUP_SUCCESS:
+        return {
+          ...state,
+          isAuthenticated: false
+        }
+      case AUTHENTICATED_FAIL:
+        return {
+          ...state,
+          isAuthenticated: false,
+          errorMessage: action.error
+        }
+      case USER_LOADED_FAIL:
+        return {
+          ...state,
+          user: null
+        }
+      case SIGNUP_FAIL:
+      case LOGIN_FAIL:
+      case LOGOUT:
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        return {
+          ...state,
+          access: null,
+          refresh: null,
+          isAuthenticated: false,
+          user: null,
+          errorMessage: action.error
+
+        }
+      default:
+        return state
   }
-};
+}

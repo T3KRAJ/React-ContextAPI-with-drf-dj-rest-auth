@@ -5,7 +5,7 @@ import PageNotFound from '../pages/PageNotFound/index'
 
 const routes = [
   {
-    path: '/login',
+    path: '',
     component: Login,
     isPrivate: false,
   },
@@ -13,12 +13,7 @@ const routes = [
     path: '/dashboard',
     component: Dashboard,
     isPrivate: true,
-  },
-  {
-    path: '/*',
-    component: PageNotFound,
-    isPrivate: true,
-  },
+  }
 ];
  
 export default routes;
