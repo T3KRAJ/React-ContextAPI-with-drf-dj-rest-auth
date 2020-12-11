@@ -25,7 +25,7 @@ const Navbar = () => {
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <Link className="navbar-brand" to='/'>Auth System</Link>
+            <Link className="navbar-brand" to='/'>Dj/React Auth System</Link>
             <button 
                 className="navbar-toggler"
                 type="button"

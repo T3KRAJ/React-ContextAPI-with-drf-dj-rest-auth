@@ -7,7 +7,11 @@ import {
   AUTHENTICATED_FAIL,
   AUTHENTICATED_SUCCESS,
   USER_LOADED_SUCCESS,
-  USER_LOADED_FAIL
+  USER_LOADED_FAIL,
+  RESET_PASSWORD_SUCCESS,
+  RESET_PASSWORD_FAIL,
+  RESET_PASSWORD_CONFIRM_SUCCESS,
+  RESET_PASSWORD_CONFIRM_FAIL,
 } from './types';
 
 export const initialState = {
@@ -16,15 +20,15 @@ export const initialState = {
   isAuthenticated: false,
   user: null,
   loading: false,
-  errorMessage: null
+  errorMessage: null,
+  msg: null,
 };
 
 
 export const AuthReducer = (state = initialState, action) => {
-  const { type, payload } = action;
 
-  switch(type) {
-      case "REQUEST_LOGIN":
+  switch(action.type) {
+      case "START_LOADING":
         return {
           ...initialState,
           loading: true
@@ -35,28 +39,33 @@ export const AuthReducer = (state = initialState, action) => {
             isAuthenticated: true
         }
       case LOGIN_SUCCESS:
-        localStorage.setItem('access', payload.access);
+        localStorage.setItem('access', action.payload.access);
         return {
           ...state,
           isAuthenticated: true,
-          access: payload.access,
-          refresh: payload.refresh
+          access: action.payload.access,
+          refresh: action.payload.refresh
         }
       case USER_LOADED_SUCCESS:
         return {
           ...state,
-          user: payload
+          user: action.payload
         }
       case SIGNUP_SUCCESS:
         return {
           ...state,
-          isAuthenticated: false
+          isAuthenticated: true,
         }
       case AUTHENTICATED_FAIL:
         return {
           ...state,
           isAuthenticated: false,
-          errorMessage: action.error
+          errorMessage: action.errorMessage
+        }
+      case RESET_PASSWORD_SUCCESS:
+        return {
+          ...state,
+          msg: action.msg
         }
       case USER_LOADED_FAIL:
         return {
@@ -74,7 +83,7 @@ export const AuthReducer = (state = initialState, action) => {
           refresh: null,
           isAuthenticated: false,
           user: null,
-          errorMessage: action.error
+          errorMessage: action.errorMessage
 
         }
       default:

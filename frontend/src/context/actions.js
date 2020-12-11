@@ -18,9 +18,9 @@ import {
     AUTHENTICATED_SUCCESS
 } from './types';
 
-const baseURL = "http://127.0.0.1:8000/"
+const baseURL = "http://127.0.0.1:8000"
 
-export const checkAuthenticated = () => async dispatch => {
+export const checkAuthenticated = (dispatch) => {
     if (typeof window == 'undefined') {
         dispatch({
             type: AUTHENTICATED_FAIL
@@ -37,7 +37,7 @@ export const checkAuthenticated = () => async dispatch => {
         const body = JSON.stringify({ token: localStorage.getItem('access') });
     
         try {
-            const res = await axios.post(`${baseURL}/auth/jwt/verify/`, body, config);
+            const res = axios.post(`${baseURL}/auth/jwt/verify/`, body, config);
     
             if (res.data.code !== 'token_not_valid') {
                 dispatch({
@@ -50,17 +50,19 @@ export const checkAuthenticated = () => async dispatch => {
             }
         } catch (err) {
             dispatch({
-                type: AUTHENTICATED_FAIL
+                type: AUTHENTICATED_FAIL,
+                errorMessage: err
             });
         }
     } else {
         dispatch({
-            type: AUTHENTICATED_FAIL
+            type: AUTHENTICATED_FAIL,
+            // errorMessage: err
         });
     }
 };
 
-export const load_user = () => async dispatch => {
+export const load_user = (dispatch) => {
     if (localStorage.getItem('access')) {
         const config = {
             headers: {
@@ -71,7 +73,7 @@ export const load_user = () => async dispatch => {
         };
 
         try {
-            const res = await axios.get(`${baseURL}/auth/users/me/`, config);
+            const res = axios.get(`${baseURL}/auth/users/me/`, config);
 
             dispatch({
                 type: USER_LOADED_SUCCESS,
@@ -79,17 +81,19 @@ export const load_user = () => async dispatch => {
             });
         } catch (err) {
             dispatch({
-                type: USER_LOADED_FAIL
+                type: USER_LOADED_FAIL,
+                errorMessage: err
             });
         }
     } else {
         dispatch({
-            type: USER_LOADED_FAIL
+            type: USER_LOADED_FAIL,
+            // errorMessage: err
         });
     }
 }
 
-export const loginUser = (email, password) => async dispatch => {
+export const loginUser = async(dispatch, email, password) => {
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -99,8 +103,8 @@ export const loginUser = (email, password) => async dispatch => {
     const body = JSON.stringify({ email, password });
 
     try {
-        const res = await axios.post(`${baseURL}/auth/jwt/create/`, body, config);
-
+        const res = await axios.post(`${baseURL}/auth/jwt/create/`, body, config)
+        console.log(res.data)
         dispatch({
             type: LOGIN_SUCCESS,
             payload: res.data
@@ -109,13 +113,17 @@ export const loginUser = (email, password) => async dispatch => {
         dispatch(load_user());
     } catch (err) {
         dispatch({
-            type: LOGIN_FAIL
+            type: LOGIN_FAIL,
+            errorMessage: err
         });
     }
 };
 
 
-export const signup = ({ username, email, phone, first_name, last_name, password, re_password }) => async dispatch => {
+export const signup = async(dispatch, username, email, phone, first_name, last_name, password, re_password ) => {
+    dispatch({
+        type: 'START_LOADING'
+    });
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -132,13 +140,18 @@ export const signup = ({ username, email, phone, first_name, last_name, password
             payload: res.data
         });
     } catch (err) {
+        console.log(err)
         dispatch({
-            type: SIGNUP_FAIL
+            type: SIGNUP_FAIL,
+            errorMessage: err
         });
     }
 };
 
 export const verify = (uid, token) => async dispatch => {
+    dispatch({
+        type: 'START_LOADING'
+    });
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -156,12 +169,16 @@ export const verify = (uid, token) => async dispatch => {
         });
     } catch (err) {
         dispatch({
-            type: ACTIVATION_FAIL
+            type: ACTIVATION_FAIL,
+            errorMessage: err
         });
     }
 };
 
-export const reset_password = (email) => async dispatch => {
+export const resetPassword = async(dispatch, email) => {
+    dispatch({
+        type: 'START_LOADING'
+    });
     const config = {
         headers: {
             'Content-Type': 'application/json'
@@ -171,15 +188,15 @@ export const reset_password = (email) => async dispatch => {
     const body = JSON.stringify({ email }); 
 
     try {
-        const res = await axios.post(`${baseURL}/auth/users/reset_password/`, body, config);
-
+        await axios.post(`${baseURL}/auth/users/reset_password/`, body, config);
         dispatch({
             type: RESET_PASSWORD_SUCCESS,
-            payload: res.data
+            msg: "Email has been sent! Check your email for further direction."
         });
     } catch (err) {
         dispatch({
-            type: RESET_PASSWORD_FAIL
+            type: RESET_PASSWORD_FAIL,
+            errorMessage: err
         });
     }
 };
@@ -202,11 +219,15 @@ export const reset_password_confirm = (uid, token, new_password, re_new_password
         });
     } catch (err) {
         dispatch({
-            type: RESET_PASSWORD_CONFIRM_FAIL
+            type: RESET_PASSWORD_CONFIRM_FAIL,
+            errorMessage: err
         });
     }
 };
 
-export const logout = () => dispatch => {
+export const logout = async(dispatch) => {
+    dispatch({
+        type: 'START_LOADING'
+    });
     dispatch({ type: LOGOUT });
 };

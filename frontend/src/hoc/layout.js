@@ -1,24 +1,28 @@
 import React, { useEffect } from 'react';
-import { checkAuthenticated, load_user } from '../context';
+import { checkAuthenticated, load_user, useAuthDispatch } from '../context';
 import Navbar from '../pages/Navbar';
 
 const Layout = (props) => {
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                await props.checkAuthenticated();
-                await props.load_user();
-            } catch (err) {
+    const dispatch = useAuthDispatch()
 
+    useEffect(() => {
+        
+        const fetchData = async() => {
+            try {
+                await checkAuthenticated(dispatch);
+                await load_user(dispatch);
+            } catch (err) {
+                console.log(err)
             }
         }
-
         fetchData();
     }, []);
 
+
+
     return (
         <div>
-        <Navbar />
+            <Navbar />
             {props.children}
         </div>
     );
